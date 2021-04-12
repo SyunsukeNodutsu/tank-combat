@@ -1,0 +1,150 @@
+﻿//-----------------------------------------------------------------------------
+// File: KdMesh.h
+//
+// Edit: 2021/03/07 野筒隼輔
+//-----------------------------------------------------------------------------
+#pragma once
+
+//--------------------------------------------------
+// 前方宣言
+//--------------------------------------------------
+struct KdMeshVertex;
+struct KdMeshFace;
+struct KdMeshSubset;
+
+//-----------------------------------------------------------------------------
+// Name: class KdMesh
+// Desc: メッシュクラス
+//-----------------------------------------------------------------------------
+class KdMesh
+{
+public:
+
+	// コンストラクタ
+	KdMesh();
+
+	// デストラクタ
+	~KdMesh() { Release(); }
+
+	// 指定サブセットを描画
+	void DrawSubset(int subsetNo) const;
+
+	// メッシュ作成
+	// ・vertices		… 頂点配列
+	// ・faces			… 面インデックス情報配列
+	// ・subsets		… サブセット情報配列
+	// 戻り値			… 成功：true
+	bool Create(const std::vector<KdMeshVertex>& vertices, const std::vector<KdMeshFace>& faces, const std::vector<KdMeshSubset>& subsets);
+
+	//--------------------------------------------------
+	// 設定
+	//--------------------------------------------------
+	// メッシュデータをデバイスへセットする
+	void SetToDevice() const;
+
+	//--------------------------------------------------
+	// 取得
+	//--------------------------------------------------
+	// サブセット情報配列を取得
+	const std::vector<KdMeshSubset>& GetSubsets() const { return m_subsets; }
+	// 頂点の座標配列を取得
+	const std::vector<Math::Vector3>& GetVertexPositions() const { return m_positions; }
+	// 面の配列を取得
+	const std::vector<KdMeshFace>& GetFaces() const { return m_faces; }
+	// 軸平行境界ボックス取得
+	const DirectX::BoundingBox& GetBoundingBox() const { return m_aabb; }
+	// 境界球取得所得
+	const DirectX::BoundingSphere& GetBoundingSphere() const { return m_bs; }
+
+private:
+	KdBuffer						m_vb;			// 頂点バッファ
+	KdBuffer						m_ib;			// インデックスバッファ
+	std::vector<KdMeshSubset>		m_subsets;		// サブセット情報
+
+	// 境界データ
+	DirectX::BoundingBox			m_aabb;			// 軸平行境界ボックス
+	DirectX::BoundingSphere			m_bs;			// 境界球
+	
+	std::vector<Math::Vector3>		m_positions;	// 座標のみの配列(複製)
+	std::vector<KdMeshFace>			m_faces;		// 面情報のみの配列(複製)
+
+private:
+	void Release();
+
+	// コピー禁止用
+	KdMesh(const KdMesh& src) = delete;
+	void operator=(const KdMesh& src) = delete;
+};
+
+//-----------------------------------------------------------------------------
+// Name: struct KdMaterial
+// Desc: マテリアル(glTFベースのPBRマテリアル)
+//-----------------------------------------------------------------------------
+struct KdMaterial
+{
+	//---------------------------------------
+	// 材質データ
+	//---------------------------------------
+
+	// 名前
+	std::string					Name;
+
+	// 基本色
+	std::shared_ptr<KdTexture>	BaseColorTex;				// 基本色テクスチャ
+	Math::Vector4				BaseColor = { 1,1,1,1 };	// 基本色のスケーリング係数(RGBA)
+
+	// 金属性、粗さ
+	std::shared_ptr<KdTexture>	MetallicRoughnessTex;		// B:金属製 G:粗さ
+	float						Metallic = 0.0f;			// 金属性のスケーリング係数
+	float						Roughness = 1.0f;			// 粗さのスケーリング係数
+
+	// 自己発光
+	std::shared_ptr<KdTexture>	EmissiveTex;				// 自己発光テクスチャ
+	Math::Vector3				Emissive = { 0,0,0 };		// 自己発光のスケーリング係数(RGB)
+
+	// 法線マップ
+	std::shared_ptr<KdTexture>	NormalTex;
+
+	KdMaterial()
+	{
+		BaseColorTex			= D3D.GetWhiteTex();
+		MetallicRoughnessTex	= D3D.GetWhiteTex();
+		EmissiveTex				= D3D.GetWhiteTex();
+		NormalTex				= D3D.GetNormalTex();
+	}
+};
+
+//-----------------------------------------------------------------------------
+// Name: struct KdMeshVertex
+// Desc: メッシュ用 頂点情報
+//-----------------------------------------------------------------------------
+struct KdMeshVertex
+{
+	Math::Vector3	Pos;		// 座標
+	Math::Vector2	UV;			// UV
+	Math::Vector3	Normal;		// 法線
+	unsigned int	Color = 0xFFFFFFFF;			// RGBA色(容量削減のため、各色0～255のUINT型)
+
+	Math::Vector3	Tangent;	// 接線
+};
+
+//-----------------------------------------------------------------------------
+// Name: struct KdMeshFace
+// Desc: メッシュ用 面情報
+//-----------------------------------------------------------------------------
+struct KdMeshFace
+{
+	UINT Idx[3];				// 三角形を構成する頂点のIndex
+};
+
+//-----------------------------------------------------------------------------
+// Name: struct KdMeshSubset
+// Desc: メッシュ用 サブセット情報
+//-----------------------------------------------------------------------------
+struct KdMeshSubset
+{
+	UINT		MaterialNo = 0;		// マテリアルNo
+
+	UINT		FaceStart = 0;		// 面Index　このマテリアルで使用されている最初の面のIndex
+	UINT		FaceCount = 0;		// 面数　FaceStartから、何枚の面が使用されているかの
+};

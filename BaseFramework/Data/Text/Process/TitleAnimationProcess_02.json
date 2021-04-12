@@ -1,0 +1,99 @@
+{
+  "GameObjectList": [
+    {
+      "ClassName": "TitleAnimationProcess",
+      "Name": "TitleAnimationProcess",
+      "State": "OP02",
+
+      "CameraInfo": {
+        "ClassName": "GameObject",
+        "Name": "FixedCamera",
+        "Position": [ -193.7, 2.8, -214.1 ],
+        "Rotation": [ 178.5, 14.0, 180.0 ]
+      }
+    },
+    {
+      "ClassName": "SkySphere",
+      "Name": "SkySphere",
+      "ModelFilepath": "Data/Model/Ambient/SkySphere/Sky.gltf",
+      "Scaling": [ 1000, 1000, 1000 ]
+    },
+    {
+      "ClassName": "GameObject",
+      "Name": "StageMap",
+      "ModelFilepath": "Data/Model/Ambient/StageMap/01/StageMap.gltf",
+      "Tag": 8,
+      "Scaling": [ 10, 10, 10 ]
+    },
+    {
+      "ClassName": "TitleTank",
+      "Prefab": "Data/Text/Object/Weapon/M4.json",
+      "Name": "TitleTank_01",
+      "Position": [ -186, 2, -240 ]
+    },
+    {
+      "ClassName": "TitleTank",
+      "Prefab": "Data/Text/Object/Weapon/M4.json",
+      "Name": "TitleTank_02",
+      "Position": [ -186, 2, -260 ]
+    },
+    {
+      "ClassName": "TitleTank",
+      "Prefab": "Data/Text/Object/Weapon/M4.json",
+      "Name": "TitleTank_03",
+      "Position": [ -186, 2, -280 ]
+    },
+
+    {
+      "ClassName": "GameObject",
+      "Prefab": "Data/Text/Object/Building/House_01.json",
+      "Name": "House_01_01",
+      "Position": [ -173.7, 0, -275.0 ],
+      "Rotation": [ 0, 180, 0 ]
+    },
+    {
+      "ClassName": "GameObject",
+      "Prefab": "Data/Text/Object/Building/House_01.json",
+      "Name": "House_01_02",
+      "Position": [ -173.7, 0, -290.0 ],
+      "Rotation": [ 0, 180, 0 ]
+    },
+
+    {
+      "ClassName": "Tree",
+      "Prefab": "Data/Text/Object/Ambient/Tree.json",
+      "Name": "Tree_01_01",
+      "Position": [ -162.2, 0, -270 ]
+    },
+    {
+      "ClassName": "Tree",
+      "Prefab": "Data/Text/Object/Ambient/Tree.json",
+      "Name": "Tree_01_02",
+      "Position": [ -156.9, 0, -294.3 ]
+    },
+    {
+      "ClassName": "Tree",
+      "Prefab": "Data/Text/Object/Ambient/Tree.json",
+      "Name": "Tree_01_03",
+      "Position": [ -170.4, 0, -259.5 ]
+    },
+    {
+      "ClassName": "Tree",
+      "Prefab": "Data/Text/Object/Ambient/Tree.json",
+      "Name": "Tree_01_04",
+      "Position": [ -195.9, 0.0, -219.4 ]
+    },
+    {
+      "ClassName": "Tree",
+      "Prefab": "Data/Text/Object/Ambient/Tree.json",
+      "Name": "Tree_01_05",
+      "Position": [ -196.8, 0.0, -280.4 ]
+    },
+    {
+      "ClassName": "Tree",
+      "Prefab": "Data/Text/Object/Ambient/Tree.json",
+      "Name": "Tree_01_06",
+      "Position": [ -177.3, 0.0, -302.2 ]
+    }
+  ]
+}

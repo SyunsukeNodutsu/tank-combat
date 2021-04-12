@@ -1,0 +1,7 @@
+{
+  "ClassName": "GameObject",
+  "Name": "House_01_00",
+  "ModelFilepath": "Data/Model/Building/BasicHouse/House01/House.gltf",
+  "Tag": 32,
+  "Scaling": [ 4, 4, 4 ]
+}

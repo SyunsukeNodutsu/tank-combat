@@ -1,0 +1,43 @@
+{
+  "GameObjectList": [
+    {
+      "ClassName": "TitleAnimationProcess",
+      "Name": "TitleAnimationProcess",
+      "State": "OP01",
+
+      "CameraInfo": {
+        "ClassName": "GameObject",
+        "Name": "FixedCamera",
+        "Position": [ 10.8, 12, -23.2 ],
+        "Rotation": [ -173.5, -10, -180 ]
+      }
+    },
+    {
+      "ClassName": "SkySphere",
+      "Name": "SkySphere",
+      "ModelFilepath": "Data/Model/Ambient/SkySphere/Sky.gltf",
+      "Scaling": [ 1000, 1000, 1000 ]
+    },
+    {
+      "ClassName": "GameObject",
+      "Name": "StageMap",
+      "ModelFilepath": "Data/Model/Ambient/StageMap/01/StageMap.gltf",
+      "Tag": 8,
+      "Scaling": [ 10, 10, 10 ]
+    },
+    {
+      "ClassName": "TitleTank",
+      "Prefab": "Data/Text/Object/Weapon/M4.json",
+      "Name": "TitleTank_01",
+      "Position": [ 0, 0, -63.7 ],
+      "Rotation": [ 0, 18.2, 0 ]
+    },
+    {
+      "ClassName": "TitleTank",
+      "Prefab": "Data/Text/Object/Weapon/M4.json",
+      "Name": "TitleTank_02",
+      "Position": [ 2, 0, -80 ],
+      "Rotation": [ 0.0, 18.2, 0.0 ]
+    }
+  ]
+}

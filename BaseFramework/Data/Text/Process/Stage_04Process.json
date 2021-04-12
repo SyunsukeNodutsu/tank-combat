@@ -1,0 +1,26 @@
+{
+  "GameObjectList": [
+    {
+      "ClassName": "TankGameProcess",
+      "Name": "TankGameProcess"
+    },
+    {
+      "ClassName": "SkySphere",
+      "Name": "SkySphere",
+      "ModelFilepath": "Data/Model/Ambient/SkySphere/Sky.gltf",
+      "Scaling": [ 1000, 1000, 1000 ]
+    },
+    {
+      "ClassName": "GameObject",
+      "Name": "StageMap",
+      "ModelFilepath": "Data/Model/Ambient/StageMap/01/StageMap.gltf",
+      "Tag": 8,
+      "Scaling": [ 10, 10, 10 ]
+    },
+    {
+      "ClassName": "PlayerTank",
+      "Name": "M4",
+      "Prefab": "Data/Text/Object/Weapon/M4.json"
+    }
+  ]
+}

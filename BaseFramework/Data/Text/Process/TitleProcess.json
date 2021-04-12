@@ -1,0 +1,15 @@
+{
+  "GameObjectList": [
+    {
+      "ClassName": "TitleProcess",
+      "Name": "TitleProcess",
+      "Position": [ -4.6, 2.0, 4.4 ],
+      "Rotation": [ -177.0, 67.5, 180.0 ]
+    },
+    {
+      "ClassName": "GameObject",
+      "Name": "M4_Title",
+      "ModelFilepath": "Data/Model/Weapon/M4/M4_Full.gltf"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "ClassName": "Tank",
+  "Name": "M4",
+  "ModelFilepath": "Data/Model/Weapon/M4/M4_Body.gltf",
+  "ColModelFilepath": "Data/Model/Weapon/M4/M4_Collision.gltf",
+
+  "MainGun": {
+    "ClassName": "GameObject",
+    "Name": "M4_MainGun",
+    "ModelFilepath": "Data/Model/Weapon/M4/M4_MainGun.gltf",
+    "LocalPosition": [ 0, 2.29, 0.84 ]
+  },
+  "Turret": {
+    "ClassName": "GameObject",
+    "Name": "M4_Turret",
+    "ModelFilepath": "Data/Model/Weapon/M4/M4_Turret.gltf",
+    "LocalPosition": [ 0, 1.85, 0.0 ],
+    "TurretRotSpeed": 0.02
+  },
+  "Track": {
+    "ClassName": "GameObject",
+    "Name": "M4_Track",
+    "ModelFilepath": "Data/Model/Weapon/M4/M4_Track.gltf",
+    "LocalPosition": [ 1.06, 0.6, -0.18 ]
+  }
+}

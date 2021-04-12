@@ -1,0 +1,26 @@
+{
+  "ClassName": "Tank",
+  "Name": "T43",
+  "ModelFilepath": "Data/Model/Weapon/T43/T43_Body.gltf",
+  "ColModelFilepath": "Data/Model/Weapon/T43/T43_Full.gltf",
+
+  "MainGun": {
+    "ClassName": "GameObject",
+    "Name": "T43_MainGun",
+    "ModelFilepath": "Data/Model/Weapon/T43/T43_MainGun.gltf",
+    "LocalPosition": [ 0.0, 2.0, 0.8 ]
+  },
+  "Turret": {
+    "ClassName": "GameObject",
+    "Name": "T43_Turret",
+    "ModelFilepath": "Data/Model/Weapon/T43/T43_Turret.gltf",
+    "LocalPosition": [ 0.0, 1.58, -0.26 ],
+    "TurretRotSpeed": 0.01
+  },
+  "Track": {
+    "ClassName": "GameObject",
+    "Name": "T43_Track",
+    "ModelFilepath": "Data/Model/Weapon/T43/T43_Track.gltf",
+    "LocalPosition": [ 1.08, 0.0, -0.86 ]
+  }
+}

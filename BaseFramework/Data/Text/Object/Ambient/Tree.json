@@ -1,0 +1,15 @@
+{
+  "ClassName": "Tree",
+  "Name": "Tree",
+  "Tag": 16,
+  "ModelFilepath": "Data/Model/Ambient/Tree/Tree_Trunk.gltf",
+  "Position": [ 0, 0, 10 ],
+  "Scaling": [ 1.2, 1.2, 1.2 ],
+
+  "TreeGrass": {
+    "ClassName": "GameObject",
+    "Name": "Tree_Grass",
+    "LocalPosition": [ 0, 0, 0 ],
+    "ModelFilepath": "Data/Model/Ambient/Tree/Tree_Grass.gltf"
+  }
+}
