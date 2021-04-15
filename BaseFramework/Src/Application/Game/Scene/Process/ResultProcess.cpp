@@ -58,6 +58,19 @@ void ResultProcess::Deserialize(const json11::Json& json_object)
 //-----------------------------------------------------------------------------
 void ResultProcess::Update()
 {
+	// イージング更新
+	UpdateEasing();
+
+	// 指定フレームで効果音発生
+	m_seCount++;
+	if (m_seCount == 30) {
+		// 効果音再生
+		AUDIO.Play("Data/Audio/SE/Fanfare3.wav");
+	}
+
+	// すぐに遷移してしまわないように ※僕のエゴかも
+	if (m_seCount <= 60) { return; }
+
 	// 遷移
 	static bool isPush = true;
 	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000) {
@@ -68,16 +81,6 @@ void ResultProcess::Update()
 		}
 	}
 	else if (isPush) { isPush = !isPush; }
-
-	// イージング更新
-	UpdateEasing();
-
-	// 指定フレームで効果音発生
-	m_seCount++;
-	if (m_seCount == 30) {
-		// 効果音再生
-		AUDIO.Play("Data/Audio/SE/Fanfare3.wav");
-	}
 }
 
 //-----------------------------------------------------------------------------
@@ -198,8 +201,10 @@ void ResultProcess::DrawSpriteResult()
 		uint8_t a = 0, b = 0, c = 0;
 		std::tie(a, b, c) = CheckHitlate(object->GetAttackNum(), object->GetAttackHitNum());
 		if (object->GetAttackNum() == 0) {
-			// 攻撃回数が0である場合は0％
-			SHADER.m_spriteShader.DrawTex(m_spNumberTextureArray[a].get(), -270 + 44, 86 - (i * 101));
+			// 攻撃回数が0である場合は100％
+			SHADER.m_spriteShader.DrawTex(m_spNumberTextureArray[0].get(), -270 + 44, 86 - (i * 101));
+			SHADER.m_spriteShader.DrawTex(m_spNumberTextureArray[0].get(), -270 + 22, 86 - (i * 101));
+			SHADER.m_spriteShader.DrawTex(m_spNumberTextureArray[1].get(), -270		, 86 - (i * 101));
 		}
 		else {
 			if (m_spNumberTextureArray[a] && m_spNumberTextureArray[b] && m_spNumberTextureArray[c]) {

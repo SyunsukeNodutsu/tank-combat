@@ -180,6 +180,7 @@ const bool CannonBall::CheckTankObject(std::shared_ptr<GameObject> object, RayIn
 					if (tank) { tank->EnemyDefeats(); }
 					CAMERA_MAGER.StartAnimation(m_owner.shared_from_this(), object->GetName());
 					// カメラアニメーションを行わないか確認
+					// 行う場合は、CameraManagerで無線を発生
 					if (!CAMERA_MAGER.IsAnimationEnable()) {
 						// 無線.撃破したぞ！
 						RADIO.Emit(WIRELESS_TYPE::eDefeat, OWNER_TYPE::ePlayer, true);

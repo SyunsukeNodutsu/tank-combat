@@ -36,6 +36,7 @@ private:
 	std::unordered_map<uint8_t, KdVector3>	m_wayPoint;			// 経由地点
 	uint8_t									m_wayPointCount;	// 経由地点を何回経由したか
 	KdVector3								m_nextWayPoint;		// 前進の目標座標
+	bool									m_onceRotFlg;		// 経由地点に車体が回転を終えたか ※がたがた防止
 
 private:
 	void SettingWayPoint(const json11::Json& json_object);

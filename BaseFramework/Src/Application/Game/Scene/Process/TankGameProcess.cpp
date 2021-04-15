@@ -8,6 +8,7 @@
 #include "Application/Game/Scene/Scene.h"
 #include "Application/Game/Scene/Pause.h"
 #include "Application/Game/Weapon/Tank.h"
+#include "Application/Manager/CameraManager.h"
 #include "Application/Manager/ClearManager.h"
 #include "Application/Manager/ObjectManager.h"
 
@@ -31,6 +32,8 @@ void TankGameProcess::Deserialize(const json11::Json& json_object)
 	PAUSE.SetGamePlaying(true);
 	// クリア管理設定
 	CLEAR_MAGER.Deserialize(KdResFac.GetJson(SCENE.GetNowSceneFilepath()));
+	// カメラアニメーションはOFFから
+	CAMERA_MAGER.SetCameraAnimation(false);
 	// BGM再生
 	AUDIO.Play("Data/Audio/BGM/Germany.wav", 0.6f, true);
 }

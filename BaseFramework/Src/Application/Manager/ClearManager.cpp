@@ -121,7 +121,6 @@ void ClearManager::EnemyDefeat()
 	// 敵の数が残り0 ゲームクリア
 	if (m_enemyCount <= 0) {
 		m_isClear = true;
-		CAMERA_MAGER.SetCameraAnimation(false);
 	}
 }
 

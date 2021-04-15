@@ -16,6 +16,8 @@ AutomaticTank::AutomaticTank()
 	: m_spState(nullptr)
 	, m_wayPoint()
 	, m_wayPointCount(0)
+	, m_nextWayPoint(KdVector3(0.0f, 0.0f, 0.0f))
+	, m_onceRotFlg(false)
 {
 }
 
@@ -32,7 +34,7 @@ void AutomaticTank::Deserialize(const json11::Json& json_object)
 	if (!json_object["Rotation"].is_null()) {
 		const std::vector<json11::Json>& rotate = json_object["Rotation"].array_items();
 		if (rotate.size() == 3 && m_spCameraComponent) {
-			m_spCameraComponent->OffsetMatrix().CreateTranslation(0.0f, 3.0f, -10.0f);
+			m_spCameraComponent->OffsetMatrix().CreateTranslation(0.0f, 3.0f, -8.0f);
 			m_spCameraComponent->OffsetMatrix().RotateY(static_cast<float>(rotate[1].number_value()) * KdToRadians);
 		}
 	}
@@ -100,6 +102,9 @@ void AutomaticTank::AdvanceOrder(const KdVector3 position)
 {
 	// 目標座標を設定
 	m_nextWayPoint = position;
+
+	// 回転Flgリセット
+	m_onceRotFlg = false;
 
 	// 遷移 -> 任務状態
 	m_spState = std::make_shared<StateMission>();
@@ -261,7 +266,13 @@ void AutomaticTank::StateMission::Initialize(AutomaticTank& owner)
 void AutomaticTank::StateMission::Update(AutomaticTank& owner)
 {
 	// 回転が終了しているか確認
-	if (owner.UpdateRotateBodyEx(owner.m_nextWayPoint - owner.m_position)) {
+	if (!owner.m_onceRotFlg) {
+		if (owner.UpdateRotateBodyEx(owner.m_nextWayPoint - owner.m_position)) {
+			owner.m_onceRotFlg = true;
+		}
+	}
+	
+	if (owner.m_onceRotFlg) {
 		// 次の経由地点に向いていたら前進
 		owner.UpdateMove(1.0f);
 	}
