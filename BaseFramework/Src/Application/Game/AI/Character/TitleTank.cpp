@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------------
 #include "TitleTank.h"
 #include "Application/Game/Weapon/TankParts.h"
+#include "Application/Component/CameraComponent.h"
 
 //-----------------------------------------------------------------------------
 // Name: Deserialize()
@@ -16,7 +17,7 @@ void TitleTank::Deserialize(const json11::Json& json_object)
 
 	// キャタピラに送信する移動量のダミー
 	m_movePow = 0.06f;
-	// 砲塔の回転OFF
+	// 主砲.砲塔の回転OFF
 	m_spTankParts->SetTurretRot(false);
 }
 

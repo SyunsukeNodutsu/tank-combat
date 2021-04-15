@@ -142,9 +142,9 @@ void PlayerTank::Destroy()
 void PlayerTank::OnceCameraSetting()
 {
 	// 固定するフレーム数
-	constexpr std::uint8_t count_max = 30;
+	constexpr std::uint_fast8_t count_max = 30;
 	// 指定フレーム数カウント.その間カメラ固定
-	static std::uint8_t count = 0;
+	static std::uint_fast8_t count = 0;
 	count++;
 	if (count >= count_max) {
 		count = 0;

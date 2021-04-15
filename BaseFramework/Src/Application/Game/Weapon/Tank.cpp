@@ -77,8 +77,7 @@ void Tank::Update()
 	m_reloadCount--;
 
 	// 追従カメラに座標を設定
-	if (m_spCameraComponent)
-	{
+	if (m_spCameraComponent) {
 		KdMatrix transMatrix = {};
 		transMatrix.CreateTranslation(m_worldMatrix.GetTranslation());
 		m_spCameraComponent->SetCameraMatrix(transMatrix);
@@ -136,18 +135,15 @@ void Tank::UpdateMove(const float input_axisY)
 	//--------------------------------------------------
 	
 	// 前進
-	if (input_axisY > 0)
-	{
+	if (input_axisY > 0) {
 		if (m_movePow <= 0.18f) { m_movePow += 0.002f; }
 	}
 	// 後退
-	else if (input_axisY < 0)
-	{
+	else if (input_axisY < 0) {
 		if (m_movePow >= -0.18f) { m_movePow -= 0.002f; }
 	}
 	// 入力なし
-	else
-	{
+	else {
 		// 減速
 		if (m_movePow > 0) { m_movePow -= 0.006f; }
 		else if (m_movePow < 0) { m_movePow += 0.006f; }
@@ -187,18 +183,15 @@ void Tank::UpdateRotateBody(const float input_axisX)
 	//--------------------------------------------------
 	
 	// 右旋回
-	if (input_axisX > 0)
-	{
+	if (input_axisX > 0) {
 		if (m_rotatePow <= 0.4f) { m_rotatePow += 0.04f; }
 	}
 	// 左旋回
-	else if (input_axisX < 0)
-	{
+	else if (input_axisX < 0) {
 		if (m_rotatePow >= -0.4f) { m_rotatePow -= 0.04f; }
 	}
 	// 入力なし
-	else
-	{
+	else {
 		// 減速
 		if (m_rotatePow > 0) { m_rotatePow -= 0.02f; }
 		else if (m_rotatePow < 0) { m_rotatePow += 0.02f; }
@@ -446,7 +439,52 @@ KdRayResult Tank::CheckGround(float& dst_distance, KdVector3 ray_pos)
 //-----------------------------------------------------------------------------
 void Tank::CheckBump()
 {
+	//--------------------------------------------------
+	// 情報設定
+	//--------------------------------------------------
 
+	// 車体の前に配置する球情報
+	SphereInfo frontSphereInfo = {};
+	frontSphereInfo.m_pos = m_position + KdVector3::GetLaunchPoint(-90.0f, 2.0f);
+	frontSphereInfo.m_pos.y += 1.0f;
+	frontSphereInfo.m_radius = 1.4f;
+
+	// 車体の後ろに配置する球情報
+	SphereInfo backSphereInfo = {};
+	backSphereInfo.m_pos = m_position + KdVector3::GetLaunchPoint(90.0f, 1.8f);
+	backSphereInfo.m_pos.y += 1.0f;
+	backSphereInfo.m_radius = 1.4f;
+
+	// 結果格納用
+	SphereResult frontSphereResult = {};
+	SphereResult backSphereResult = {};
+
+	//--------------------------------------------------
+	// 判定
+	//--------------------------------------------------
+	for (auto& object : OBJ_MAGER.GetObjectList()) {
+		if (object.get() == this) { continue; }
+		if (object->GetTag() == OBJECT_TAG::TAG_StageObject) { continue; }
+		// 家
+		if (object->GetTag() == OBJECT_TAG::TAG_HouseObject) {
+			// 前
+			if (object->GetCollisionComponent()->HitCheckBySphereVsMesh(frontSphereInfo, frontSphereResult)) {
+				m_position += frontSphereResult.m_push;
+			}
+			// 後ろ
+			if (object->GetCollisionComponent()->HitCheckBySphereVsMesh(backSphereInfo, backSphereResult)) {
+				m_position += backSphereResult.m_push;
+			}
+		}
+		// 木
+		if (object->GetTag() & OBJECT_TAG::TAG_TreeObject) {
+
+		}
+		// 草の壁
+		if (object->GetTag() & OBJECT_TAG::TAG_GrassObject) {
+
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------

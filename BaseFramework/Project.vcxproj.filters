@@ -127,6 +127,12 @@
     <Filter Include="Src\Application\Manager">
       <UniqueIdentifier>{d820e64a-4428-4877-a5b0-a46e6d7b0481}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Data\Text\Object\Meta">
+      <UniqueIdentifier>{c1a7f4d9-f4da-49f9-85de-532e669daefd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Text\Object\Other">
+      <UniqueIdentifier>{6d681d65-9698-4925-93d0-5a28f202ac55}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -720,6 +726,9 @@
     </None>
     <None Include="Data\Text\Process\TitleAnimationProcess_02.json">
       <Filter>Data\Text\Process</Filter>
+    </None>
+    <None Include="Data\Text\Object\Meta\AddEnemy_Tutorial_01.json">
+      <Filter>Data\Text\Object\Meta</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

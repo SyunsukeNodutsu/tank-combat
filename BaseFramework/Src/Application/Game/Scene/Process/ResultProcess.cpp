@@ -197,10 +197,16 @@ void ResultProcess::DrawSpriteResult()
 		//--------------------------------------------------
 		uint8_t a = 0, b = 0, c = 0;
 		std::tie(a, b, c) = CheckHitlate(object->GetAttackNum(), object->GetAttackHitNum());
-		if (m_spNumberTextureArray[a] && m_spNumberTextureArray[b] && m_spNumberTextureArray[c]) {
-			SHADER.m_spriteShader.DrawTex(m_spNumberTextureArray[a].get(), -270 + 44, 86 - (i * 101));	// 1の位
-			SHADER.m_spriteShader.DrawTex(m_spNumberTextureArray[b].get(), -270 + 22, 86 - (i * 101));	// 10の位
-			SHADER.m_spriteShader.DrawTex(m_spNumberTextureArray[c].get(), -270, 86 - (i * 101));		// 100の位
+		if (object->GetAttackNum() == 0) {
+			// 攻撃回数が0である場合は0％
+			SHADER.m_spriteShader.DrawTex(m_spNumberTextureArray[a].get(), -270 + 44, 86 - (i * 101));
+		}
+		else {
+			if (m_spNumberTextureArray[a] && m_spNumberTextureArray[b] && m_spNumberTextureArray[c]) {
+				SHADER.m_spriteShader.DrawTex(m_spNumberTextureArray[a].get(), -270 + 44, 86 - (i * 101));
+				SHADER.m_spriteShader.DrawTex(m_spNumberTextureArray[b].get(), -270 + 22, 86 - (i * 101));
+				if (c != 0) { SHADER.m_spriteShader.DrawTex(m_spNumberTextureArray[c].get(), -270, 86 - (i * 101)); }
+			}
 		}
 
 		//--------------------------------------------------

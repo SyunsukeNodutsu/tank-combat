@@ -1,0 +1,11 @@
+{
+  "ClassName": "AutomaticTank",
+  "Name": "M4_Enemy_01",
+  "Prefab": "Data/Text/Object/Weapon/M4.json",
+  "Tag": 4,
+  "Position": [ -170, 2, -20 ],
+  "Rotation": [ 0, 90, 0 ],
+  "WayPointList": [
+    { "WayPoint": [ -190, 2, -20 ] }
+  ]
+}

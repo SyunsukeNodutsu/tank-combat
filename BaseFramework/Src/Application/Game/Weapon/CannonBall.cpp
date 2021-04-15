@@ -172,7 +172,7 @@ const bool CannonBall::CheckTankObject(std::shared_ptr<GameObject> object, RayIn
 		if (object->GetTag() & OBJECT_TAG::TAG_Enemy) {
 			if (bHit) {
 				// Tankクラスにダウンキャストして通知
-				std::shared_ptr<Tank> tank = std::dynamic_pointer_cast<Tank>(object);
+				std::shared_ptr<Tank> tank = std::dynamic_pointer_cast<Tank>(m_owner.shared_from_this());
 				// 命中を通知
 				if (tank) { tank->AttackHit(); }
 				if (object->IsAlive()) {

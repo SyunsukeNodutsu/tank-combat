@@ -16,7 +16,7 @@
 CameraManager::CameraManager()
 	: m_wpTargetCamera()
 	, m_spStart(nullptr)
-	, m_animationSpeed(0.08f)
+	, m_animationSpeed(0.06f)
 	, m_isAnimationEnable(false)
 	, m_isAnimation(false)
 {

@@ -24,8 +24,19 @@ public:
 	// 2D描画
 	void DrawSprite() override;
 
+	// 矢印の更新 指定座標で上下運動
+	void UpdateArrow();
+
 private:
-	std::shared_ptr<StateBase> m_spState; // 現在の状態
+	std::shared_ptr<StateBase>	m_spState;			// 現在の状態
+	// 矢印関連 ※自身のModelを矢印に
+	KdVector3					m_startPos;			// 開始座標
+	KdVector3					m_goalPos;			// 終了座標
+	float						m_arrowProgress;	// 進行具合
+	bool						m_goTo;				// 向かっているか
+
+private:
+	void SettingArrow(const json11::Json& json_object);
 
 private:
 	//==================================================
@@ -62,6 +73,7 @@ private:
 	private:
 		Progress									m_progress;			// 進行具合
 		std::array<std::shared_ptr<KdTexture>, 7>	m_spTextureArray;	// テクスチャ
+		bool										m_isEnemyPop;		// 敵を出現
 
 		// 進行具合
 		enum class Progress
@@ -73,6 +85,9 @@ private:
 			e04,	// 射撃の説明(敵を倒させる)
 			eEnd,	// 終了
 		};
+
+	private:
+		const bool CheckArrival(TutorialProcess& owner) const;
 	};
 
 	//--------------------------------------------------

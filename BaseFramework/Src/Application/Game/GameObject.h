@@ -134,4 +134,5 @@ enum OBJECT_TAG
 	TAG_StageObject		= 1 << 3,	// 地面
 	TAG_TreeObject		= 1 << 4,	// 木
 	TAG_HouseObject		= 1 << 5,	// 家
+	TAG_GrassObject		= 1 << 6,	// 草垣
 };

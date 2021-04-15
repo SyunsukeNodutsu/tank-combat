@@ -21,7 +21,7 @@
     {
       "ClassName": "GameObject",
       "Name": "StageMap",
-      "ModelFilepath": "Data/Model/Ambient/StageMap/01/StageMap.gltf",
+      "ModelFilepath": "Data/Model/Ambient/StageMap/Stage_01/StageMap.gltf",
       "Tag": 8,
       "Scaling": [ 10, 10, 10 ]
     },

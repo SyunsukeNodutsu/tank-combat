@@ -91,8 +91,9 @@ void AnimationCamera::SetInfo(const std::shared_ptr<GameObject>& start, const st
 
 	// カメラ生成
 	m_spCameraComponent = std::make_shared<CameraComponent>(*this);
-	if (m_spCameraComponent == nullptr) {
-		assert(0 && "[SetInfo] : カメラ生成失敗");
+	if (m_spCameraComponent) {
+		// 視野角設定
+		m_spCameraComponent->SetFovAngle(90.0f * KdToRadians);
 	}
 
 	// ぼかしOFF

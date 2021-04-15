@@ -24,8 +24,22 @@ public:
 	// 死亡
 	void Destroy() override;
 
+	// 前進命令
+	void AdvanceOrder(const KdVector3 position);
+	// 次の経由地点を確認
+	void CheckNextWayPoint();
+	// 引数の軸に車体を回転させる
+	const bool UpdateRotateBodyEx(const KdVector3 axis);
+
 private:
-	std::shared_ptr<StateBase> m_spState; // 状態
+	std::shared_ptr<StateBase>				m_spState;			// 状態
+	std::unordered_map<uint8_t, KdVector3>	m_wayPoint;			// 経由地点
+	uint8_t									m_wayPointCount;	// 経由地点を何回経由したか
+	KdVector3								m_nextWayPoint;		// 前進の目標座標
+
+private:
+	void SettingWayPoint(const json11::Json& json_object);
+	const bool CheckArrivalWayPoint();
 
 private:
 	//--------------------------------------------------
@@ -38,6 +52,14 @@ private:
 	public:
 		virtual void Initialize(AutomaticTank& owner) = 0;
 		virtual void Update(AutomaticTank& owner) = 0;
+	};
+
+	// 待機状態
+	class StateWait : public StateBase
+	{
+	public:
+		void Initialize(AutomaticTank& owner) override;
+		void Update(AutomaticTank& owner)  override;
 	};
 
 	// ミッション(移動を繰り返す)状態

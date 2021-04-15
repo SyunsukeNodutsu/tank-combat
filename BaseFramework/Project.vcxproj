@@ -322,6 +322,7 @@
   <ItemGroup>
     <None Include="Data\Text\Object\Ambient\Tree.json" />
     <None Include="Data\Text\Object\Building\House_01.json" />
+    <None Include="Data\Text\Object\Meta\AddEnemy_Tutorial_01.json" />
     <None Include="Data\Text\Object\Weapon\Aircraft.json" />
     <None Include="Data\Text\Object\Weapon\CannonBall.json" />
     <None Include="Data\Text\Object\Weapon\M4.json" />

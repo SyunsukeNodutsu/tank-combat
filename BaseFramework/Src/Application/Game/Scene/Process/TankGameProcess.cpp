@@ -29,6 +29,8 @@ void TankGameProcess::Deserialize(const json11::Json& json_object)
 	GameObject::Deserialize(json_object);
 	SCENE.SetCursorShow(false);
 	PAUSE.SetGamePlaying(true);
+	// クリア管理設定
+	CLEAR_MAGER.Deserialize(KdResFac.GetJson(SCENE.GetNowSceneFilepath()));
 	// BGM再生
 	AUDIO.Play("Data/Audio/BGM/Germany.wav", 0.6f, true);
 }

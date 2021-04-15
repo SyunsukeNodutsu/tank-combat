@@ -197,8 +197,6 @@ void Scene::LoadScene(const std::string& filepath)
 	// ステージごとのライトやフォグの設定
 	//--------------------------------------------------
 	StageSetting(json_object);
-	// クリア管理設定
-	CLEAR_MAGER.Deserialize(json_object);
 	// ナビゲーション管理
 	WAYP_NAVI.Initialize();
 

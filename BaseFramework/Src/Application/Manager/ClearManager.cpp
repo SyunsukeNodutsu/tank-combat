@@ -33,6 +33,7 @@ void ClearManager::Deserialize(const json11::Json& json_object)
 {
 	LoadTexture();
 	SettingParameter(json_object);
+	m_isClear = m_isGameOver = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -42,6 +43,7 @@ void ClearManager::Deserialize(const json11::Json& json_object)
 void ClearManager::Update()
 {
 	if ((m_isClear == false) && (m_isGameOver == false)) { return; }
+	if (!PAUSE.IsPlaying()) { return; }
 
 	//--------------------------------------------------
 	// クリア時の演出
@@ -65,7 +67,6 @@ void ClearManager::Update()
 	if (cnt >= 480) {
 		// 各値初期化
 		m_textureColor = Math::Color(0.0f, 0.0f, 0.0f, 0.0f);
-		m_isClear = m_isGameOver = false;
 		cnt = 0;
 		cnt2 = 0.0f;
 
@@ -89,6 +90,7 @@ void ClearManager::Update()
 void ClearManager::DrawSprite()
 {
 	if ((m_isClear == false) && (m_isGameOver == false)) { return; }
+	if (!PAUSE.IsPlaying()) { return; }
 
 	// テクスチャ設定 clear or feiled
 	auto texture = (m_isClear) ? m_spClearStringTexture.get() : m_spGameOverStringTexture.get();
