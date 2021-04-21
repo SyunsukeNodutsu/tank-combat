@@ -1,12 +1,14 @@
 ﻿//-----------------------------------------------------------------------------
 // File: AutomaticTank.h
 //
-// Edit: 2021/03/19 野筒隼輔
+// Edit: 2021/04/20 野筒隼輔
 //-----------------------------------------------------------------------------
 #include "AutomaticTank.h"
 #include "Application/Game/Weapon/TankParts.h"
 #include "Application/Component/CameraComponent.h"
 #include "Application/Manager/ClearManager.h"
+#include "Application/Manager/DrawManager.h"
+#include "Application/Manager/ObjectManager.h"
 
 //-----------------------------------------------------------------------------
 // Name: AutomaticTank()
@@ -87,9 +89,7 @@ void AutomaticTank::Destroy()
 	if (m_spTankParts) { m_spTankParts->Crash(); }
 
 	// 撃破通知
-	if (m_tag & OBJECT_TAG::TAG_Enemy) {
-		CLEAR_MAGER.EnemyDefeat();
-	}
+	if (m_tag & OBJECT_TAG::TAG_Enemy) { CLEAR_MAGER.EnemyDefeat(); }
 
 	GameObject::Destroy();
 }
@@ -103,12 +103,12 @@ void AutomaticTank::AdvanceOrder(const KdVector3 position)
 	// 目標座標を設定
 	m_nextWayPoint = position;
 
-	// 回転Flgリセット
-	m_onceRotFlg = false;
-
 	// 遷移 -> 任務状態
 	m_spState = std::make_shared<StateMission>();
-	if (m_spState) { m_spState->Initialize(*this); }
+	if (m_spState) {
+		m_spState->Initialize(*this);
+		m_onceRotFlg = false;
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -133,7 +133,10 @@ void AutomaticTank::CheckNextWayPoint()
 	else {
 		// 待機状態に遷移
 		m_spState = std::make_shared<StateWait>();
-		if (m_spState) { m_spState->Initialize(*this); }
+		if (m_spState) {
+			m_spState->Initialize(*this);
+			m_onceRotFlg = false;
+		}
 	}
 }
 
@@ -211,9 +214,51 @@ const bool AutomaticTank::CheckArrivalWayPoint()
 	constexpr float tolerance = 6.0f;
 
 	// 距離判定
-	return (
-		m_nextWayPoint.x - m_position.x <= tolerance && m_nextWayPoint.x - m_position.x >= -tolerance &&
-		m_nextWayPoint.z - m_position.z <= tolerance && m_nextWayPoint.z - m_position.z >= -tolerance);
+	return m_nextWayPoint.x - m_position.x <= tolerance && m_nextWayPoint.x - m_position.x >= -tolerance &&
+		m_nextWayPoint.z - m_position.z <= tolerance && m_nextWayPoint.z - m_position.z >= -tolerance;
+}
+
+//-----------------------------------------------------------------------------
+// Name: SearchEnemy()
+// Desc: 敵の索敵
+//-----------------------------------------------------------------------------
+void AutomaticTank::SearchEnemy()
+{
+	//--------------------------------------------------
+	// 関数内関数でTAGの確認
+	//--------------------------------------------------
+	struct LocalFunc {
+		// TAG確認
+		static bool CheckTargetTag(const UINT myTag, const UINT targetTag) {
+			// 自身が味方戦車か確認
+			return (myTag == OBJECT_TAG::TAG_Allies)
+				// 味方の場合...目標はEnemy
+				? (targetTag & OBJECT_TAG::TAG_Enemy)
+				// 敵の場合  ...目標はPlayerかAllies
+				: ((targetTag & OBJECT_TAG::TAG_Player) || (targetTag & OBJECT_TAG::TAG_Allies));
+		}
+	};
+
+	//--------------------------------------------------
+	// 索敵
+	//--------------------------------------------------
+
+	for (auto& tank : OBJ_MAGER.GetTankList()) {
+		if (!LocalFunc::CheckTargetTag(m_tag, tank->GetTag())) { continue; }
+		if (!tank->IsAlive()) { continue; }
+
+		// 目標との距離を算出 ※修正.一番近い距離を算出したほうがいい
+		float distance = KdVector3::GetDistance(m_position, tank->GetMatrix().GetTranslation());
+		if (distance > 100.0f) { continue; }
+
+		// 遷移->戦闘状態
+		m_spState = std::make_shared<StateCombat>();
+		if (m_spState) {
+			m_spState->Initialize(*this);
+			m_enemyTarget = tank;
+			m_onceRotFlg = false;
+		}
+	}
 }
 
 
@@ -239,7 +284,8 @@ void AutomaticTank::StateWait::Initialize(AutomaticTank& owner)
 //-----------------------------------------------------------------------------
 void AutomaticTank::StateWait::Update(AutomaticTank& owner)
 {
-
+	// 索敵
+	owner.SearchEnemy();
 }
 
 
@@ -267,18 +313,101 @@ void AutomaticTank::StateMission::Update(AutomaticTank& owner)
 {
 	// 回転が終了しているか確認
 	if (!owner.m_onceRotFlg) {
-		if (owner.UpdateRotateBodyEx(owner.m_nextWayPoint - owner.m_position)) {
+		if (owner.UpdateRotateBodyEx(owner.m_nextWayPoint - owner.m_position)) {	
+			// 坂道などで回転がリセットされるので.車体がガタガタしないように
 			owner.m_onceRotFlg = true;
 		}
 	}
 	
 	if (owner.m_onceRotFlg) {
-		// 次の経由地点に向いていたら前進
+		// 次の経由地点に車体が向いていたら前進
 		owner.UpdateMove(1.0f);
 	}
 
+	// 次の経由地点を確認
+	owner.CheckNextWayPoint();
 	// 衝突判定更新
 	owner.UpdateCollision();
+	// 索敵
+	owner.SearchEnemy();
+
+	// デバッグ球表示
+	for (auto& point : owner.m_wayPoint) {
+		DRAW_MAGER.AddDebugSphereLine(point.second, 1.0f, kRedColor);
+	}
+}
+
+
+
+//=============================================================================
+// 
+// AutomaticTank
+// 
+//=============================================================================
+
+//-----------------------------------------------------------------------------
+// Name: StateCombat()
+// Desc: コンストラクタ
+//-----------------------------------------------------------------------------
+AutomaticTank::StateCombat::StateCombat()
+{
+}
+
+//-----------------------------------------------------------------------------
+// Name: Initialize()
+// Desc: 初期化
+//-----------------------------------------------------------------------------
+void AutomaticTank::StateCombat::Initialize(AutomaticTank& owner)
+{
+}
+
+//-----------------------------------------------------------------------------
+// Name: Update()
+// Desc: 更新
+//-----------------------------------------------------------------------------
+void AutomaticTank::StateCombat::Update(AutomaticTank& owner)
+{
+	if (owner.m_enemyTarget == nullptr) { return; }
+
+	// 敵への方向
+	KdVector3 targetAxis = owner.m_enemyTarget->GetMatrix().GetTranslation() - owner.m_position;
+
+	// 車体の回転更新
+	owner.UpdateRotateBodyEx(targetAxis);
+	// 攻撃更新
+	if (CheckObstacle(owner)) {
+		// 障害物がなければ攻撃
+		owner.UpdateShot();
+	}
+
+	// 砲塔にカメラのZ軸を送信
+	if (owner.m_spTankParts) {
+		owner.m_spTankParts->SetTargetAxis(targetAxis);
+	}
+
+	// 敵を撃破したら任務に戻る
+	if (!owner.m_enemyTarget->IsAlive()) {
+		owner.m_spState = std::make_shared<StateMission>();
+		if (owner.m_spState) {
+			owner.m_spState->Initialize(owner);
+			owner.m_onceRotFlg = false;
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Name: CheckObstacle()
+// Desc: 障害物の確認 ※障害物がない...true 障害物が存在...false
+//-----------------------------------------------------------------------------
+const bool AutomaticTank::StateCombat::CheckObstacle(AutomaticTank& owner)
+{
+	// 主砲のZ軸
+	KdVector3 axis = owner.m_spTankParts->GetMainGun()->GetMatrix().GetAxisZ();
+
+	// 見えない球を発射して.結果から障害物の有無を確定
+
+
+	return true;
 }
 
 
@@ -295,7 +424,10 @@ void AutomaticTank::StateMission::Update(AutomaticTank& owner)
 //-----------------------------------------------------------------------------
 void AutomaticTank::StateDead::Initialize(AutomaticTank& owner)
 {
-	owner.m_deadSmkEffect->Play(owner.m_position);
+	// 煙
+	if (owner.m_deadSmkEffect) {
+		owner.m_deadSmkEffect->Play(owner.m_position);
+	}
 }
 
 //-----------------------------------------------------------------------------

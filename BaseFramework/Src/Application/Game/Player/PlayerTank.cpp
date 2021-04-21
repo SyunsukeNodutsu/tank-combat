@@ -64,15 +64,6 @@ void PlayerTank::Update()
 	if (SCENE.IsEdiorMode()) { return; }
 	if (CAMERA_MAGER.IsAnimation()) { return; }
 	Tank::Update();
-
-	if(false) {
-		// ライトの向き
-		DirectX::XMFLOAT3 lightVec(0.5f, -1.0f, 0.5f);
-		// 影が落ちる地面
-		DirectX::XMFLOAT4 planeVec(0.0f, 1.0f, 0.0f, 0.0f);
-		// 影行列作成
-		DirectX::XMMATRIX shadowMat = DirectX::XMMatrixShadow(DirectX::XMLoadFloat4(&planeVec), DirectX::XMLoadFloat3(&lightVec));
-	}
 }
 
 //-----------------------------------------------------------------------------
@@ -199,6 +190,9 @@ void PlayerTank::UpdateCamera()
 	rotateMat.CreateRotationX(rotateY);
 	m_spCameraComponent->OffsetMatrix() = rotateMat * m_spCameraComponent->OffsetMatrix();
 	m_spCameraComponent->OffsetMatrix().RotateY(rotateX);
+
+	// 砲塔にカメラのZ軸を送信
+	if (m_spTankParts) { m_spTankParts->SetTargetAxis(m_spCameraComponent->GetCameraMatrix().GetAxisZ()); }
 }
 
 //-----------------------------------------------------------------------------
@@ -355,6 +349,10 @@ void PlayerTank::StateAim::Update(PlayerTank& owner)
 //-----------------------------------------------------------------------------
 void PlayerTank::StateDead::Initialize(PlayerTank& owner)
 {
+	// 煙
+	if (owner.m_deadSmkEffect) {
+		owner.m_deadSmkEffect->Play(owner.m_position);
+	}
 }
 
 //-----------------------------------------------------------------------------

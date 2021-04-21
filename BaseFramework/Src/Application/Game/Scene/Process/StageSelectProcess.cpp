@@ -46,15 +46,17 @@ void StageSelectProcess::Deserialize(const json11::Json& json_object)
 void StageSelectProcess::Update()
 {
 	// 遷移
-	static bool isPush = true;
-	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000) {
-		if (!isPush) {
-			isPush = !isPush;
-			AUDIO.Play("Data/Audio/SE/Cancel.wav", 0.5f);
-			SCENE.RequestChangeScene("Data/Text/Process/TitleProcess.json");
+	if (APP.m_window.GetWinInfo().dwWindowStatus & WS_ACTIVECAPTION) {
+		static bool isPush = true;
+		if (GetAsyncKeyState(VK_RBUTTON) & 0x8000) {
+			if (!isPush) {
+				isPush = !isPush;
+				AUDIO.Play("Data/Audio/SE/Cancel.wav", 0.5f);
+				SCENE.RequestChangeScene("Data/Text/Process/TitleProcess.json");
+			}
 		}
+		else if (isPush) { isPush = !isPush; }
 	}
-	else if (isPush) { isPush = !isPush; }
 
 	// マウス情報所得
 	POINT mouse_pos = {};

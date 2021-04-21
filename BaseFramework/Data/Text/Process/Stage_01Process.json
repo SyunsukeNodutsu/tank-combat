@@ -3,6 +3,13 @@
 
   "GameObjectList": [
     {
+      "ClassName": "PlayerTank",
+      "Name": "M4",
+      "Tag": 1,
+      "Prefab": "Data/Text/Object/Weapon/M4.json",
+      "Position": [ -186, 2, -280 ]
+    },
+    {
       "ClassName": "TutorialProcess",
       "Name": "TutorialProcess",
       "ModelFilepath": "Data/Model/Other/Arrow/Arrow01.gltf",
@@ -19,16 +26,9 @@
     {
       "ClassName": "GameObject",
       "Name": "StageMap",
-      "ModelFilepath": "Data/Model/Ambient/StageMap/Tutorial_01/StageMap.gltf",
+      "ModelFilepath": "Data/Model/Ambient/StageMap/Stage_01/StageMap.gltf",
       "Tag": 8,
       "Scaling": [ 10, 10, 10 ]
-    },
-    {
-      "ClassName": "PlayerTank",
-      "Name": "M4",
-      "Tag": 1,
-      "Prefab": "Data/Text/Object/Weapon/M4.json",
-      "Position": [ -186, 2, -280 ]
     }
   ]
 }

@@ -20,6 +20,7 @@ TankParts::TankParts(Tank& owner)
 	, m_mainGunRotNum(0.0f)
 	, m_turret(nullptr)
 	, m_turretLocalMat()
+	, m_targetAxis(KdVector3(0.0f, 0.0f, 0.0f))
 	, m_turretRotNum(0.0f)
 	, m_turretRotSpeed(0.02f)
 	, m_isRot(true)
@@ -228,15 +229,14 @@ void TankParts::UpdateMainGun()
 	if (m_mainGun == nullptr) { return; }
 	if (!m_owner.IsAlive()) { return; }
 
+	// カメラのZ軸所得
+	KdVector3 camera_axizZ = m_owner.GetCameraComponent()->GetCameraMatrix().GetAxisZ();
+
 	//--------------------------------------------------
 	// 回転
 	//--------------------------------------------------
-	if (m_owner.GetCameraComponent() && m_isRot)
+	if (m_owner.GetCameraComponent() && m_isRot && (camera_axizZ.LengthSquared() != 0))
 	{
-		// カメラのZ軸所得
-		KdVector3 camera_axizZ = m_owner.GetCameraComponent()->GetCameraMatrix().GetAxisZ();
-		if (camera_axizZ.LengthSquared() == 0) { return; }
-
 		// 砲塔のZ軸
 		KdVector3 mainGunAxisZ = m_mainGun->GetMatrix().GetAxisZ();
 		mainGunAxisZ.Normalize();
@@ -287,18 +287,14 @@ void TankParts::UpdateTurret()
 	//--------------------------------------------------
 	// 回転
 	//--------------------------------------------------
-	if (m_owner.GetCameraComponent() && m_isRot)
+	if (m_owner.GetCameraComponent() && m_isRot && (m_targetAxis.LengthSquared() != 0))
 	{
-		// カメラのZ軸所得
-		KdVector3 camera_axizZ = m_owner.GetCameraComponent()->GetCameraMatrix().GetAxisZ();
-		if (camera_axizZ.LengthSquared() == 0) { return; }
-
 		// 砲塔のZ軸
 		KdVector3 nowDir = m_turret->GetMatrix().GetAxisZ();
 		nowDir.Normalize();
 
 		// 差分を算出
-		float rotateRadian = atan2f(camera_axizZ.x, camera_axizZ.z) - atan2f(nowDir.x, nowDir.z);
+		float rotateRadian = atan2f(m_targetAxis.x, m_targetAxis.z) - atan2f(nowDir.x, nowDir.z);
 
 		// 180度の際に補正
 		if (rotateRadian > M_PI) { rotateRadian -= 2 * static_cast<float>(M_PI); }

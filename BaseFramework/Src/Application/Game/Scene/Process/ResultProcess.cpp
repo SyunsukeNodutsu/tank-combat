@@ -8,6 +8,7 @@
 #include "Application/Game/Weapon/Tank.h"
 #include "Application/Manager/ClearManager.h"
 #include "Application/Manager/ObjectManager.h"
+#include "Application/main.h"
 
 //-----------------------------------------------------------------------------
 // Name: ResultProcess()
@@ -73,14 +74,16 @@ void ResultProcess::Update()
 
 	// 遷移
 	static bool isPush = true;
-	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000) {
-		if (!isPush) {
-			isPush = !isPush;
-			AUDIO.Play("Data/Audio/SE/Enter.wav", 0.5f);
-			SCENE.RequestChangeScene("Data/Text/Process/StageSelectProcess.json");
+	if (APP.m_window.GetWinInfo().dwWindowStatus & WS_ACTIVECAPTION) {
+		if (GetAsyncKeyState(VK_LBUTTON) & 0x8000) {
+			if (!isPush) {
+				isPush = !isPush;
+				AUDIO.Play("Data/Audio/SE/Enter.wav", 0.5f);
+				SCENE.RequestChangeScene("Data/Text/Process/StageSelectProcess.json");
+			}
 		}
+		else if (isPush) { isPush = !isPush; }
 	}
-	else if (isPush) { isPush = !isPush; }
 }
 
 //-----------------------------------------------------------------------------

@@ -39,6 +39,8 @@ public:
 	//--------------------------------------------------
 	// 設定
 	//--------------------------------------------------
+	// 砲塔を向けたい軸を設定
+	void SetTargetAxis(const KdVector3 axis) { m_targetAxis = axis; }
 	// 主砲.砲塔の回転ON.OFF
 	void SetTurretRot(const bool isRot) { m_isRot = isRot; }
 	// 死亡時に主砲と砲塔を上に傾ける
@@ -56,6 +58,7 @@ private:
 	// 砲塔
 	std::shared_ptr<GameObject>		m_turret;
 	KdMatrix						m_turretLocalMat;
+	KdVector3						m_targetAxis;
 	float							m_turretRotNum;
 	float							m_turretRotSpeed;
 

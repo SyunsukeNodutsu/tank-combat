@@ -155,6 +155,9 @@ TankInputComponent::TankInputComponent(GameObject& owner)
 //-----------------------------------------------------------------------------
 void TankInputComponent::Update()
 {
+	// アクティブか確認
+	if (!(APP.m_window.GetWinInfo().dwWindowStatus & WS_ACTIVECAPTION)) { return; }
+
 	for (auto& axis : m_axes) {
 		axis = { 0.0f,0.0f };
 	}

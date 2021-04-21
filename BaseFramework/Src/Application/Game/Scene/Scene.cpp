@@ -49,7 +49,7 @@ void Scene::Deserialize()
 	IRQ.Deserialize();
 
 	// 音量設定
-	AUDIO.SetUserSettingVolume(0.4f);
+	AUDIO.SetUserSettingVolume(0.08f);
 
 	//--------------------------------------------------
 	// 開始シーン
@@ -128,6 +128,10 @@ void Scene::ImGuiUpdate()
 		ImGui::Text("FPS       : %d", APP.m_fps);
 		ImGui::Text("ThreadNum : %d", std::thread::hardware_concurrency());
 		ImGui::Text("ThreadID  : %d", std::this_thread::get_id());
+
+		if (APP.m_window.GetWinInfo().dwWindowStatus & WS_ACTIVECAPTION) { ImGui::Text("State     : ACTIVE"); }
+		else { ImGui::Text("State     : NOT ACTIVE"); }
+
 		// デバッグ.発表用
 		DEBUG_MAGER.ImGuiUpdate();
 	}

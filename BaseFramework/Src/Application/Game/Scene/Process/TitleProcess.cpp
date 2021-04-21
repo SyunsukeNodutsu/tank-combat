@@ -70,13 +70,15 @@ void TitleProcess::Update()
 	UpdateButton(mouse_pos);
 
 	// タイトルアニメーションに戻る
-	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000) {
-		if (!m_isPushRButton) {
-			m_isPushRButton = !m_isPushRButton;
-			SCENE.RequestChangeScene("Data/Text/Process/TitleAnimationProcess_01.json");
+	if (APP.m_window.GetWinInfo().dwWindowStatus & WS_ACTIVECAPTION) {
+		if (GetAsyncKeyState(VK_RBUTTON) & 0x8000) {
+			if (!m_isPushRButton) {
+				m_isPushRButton = !m_isPushRButton;
+				SCENE.RequestChangeScene("Data/Text/Process/TitleAnimationProcess_01.json");
+			}
 		}
+		else if (m_isPushRButton) { m_isPushRButton = !m_isPushRButton; }
 	}
-	else if (m_isPushRButton) { m_isPushRButton = !m_isPushRButton; }
 
 	// カメラ更新
 	if (m_spCameraComponent) { m_spCameraComponent->SetCameraMatrix(m_worldMatrix); }

@@ -101,6 +101,8 @@ void Pause::CheckChangeEnable()
 	if (!m_isPlaying) { return; }
 	// ゲームが終了しているか
 	if (CLEAR_MAGER.IsGameEnd()) { return; }
+	// アクティブか確認
+	if (!(APP.m_window.GetWinInfo().dwWindowStatus & WS_ACTIVECAPTION)) { return; }
 
 	static bool isPush = true;
 	if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {

@@ -1,14 +1,14 @@
 ﻿//-----------------------------------------------------------------------------
 // File: AutomaticTank.h
 //
-// Edit: 2021/03/19 野筒隼輔
+// Edit: 2021/04/20 野筒隼輔
 //-----------------------------------------------------------------------------
 #pragma once
 #include "Application/Game/Weapon/Tank.h"
 
 //-----------------------------------------------------------------------------
 // Name: class AutomaticTank
-// Desc: 自動戦車クラス
+// Desc: 自動戦車クラス ※修正.StateMachineの遷移を関数にする
 //-----------------------------------------------------------------------------
 class AutomaticTank : public Tank
 {
@@ -30,24 +30,32 @@ public:
 	void CheckNextWayPoint();
 	// 引数の軸に車体を回転させる
 	const bool UpdateRotateBodyEx(const KdVector3 axis);
+	// 索敵
+	void SearchEnemy();
 
 private:
 	std::shared_ptr<StateBase>				m_spState;			// 状態
 	std::unordered_map<uint8_t, KdVector3>	m_wayPoint;			// 経由地点
 	uint8_t									m_wayPointCount;	// 経由地点を何回経由したか
 	KdVector3								m_nextWayPoint;		// 前進の目標座標
-	bool									m_onceRotFlg;		// 経由地点に車体が回転を終えたか ※がたがた防止
+	bool									m_onceRotFlg;		// 経由地点に車体が回転を終えたか
+	std::shared_ptr<Tank>					m_enemyTarget;		// 攻撃目標 ※修正.各Stateに持たせて.アクセサで設定したほうがいい
 
 private:
 	void SettingWayPoint(const json11::Json& json_object);
 	const bool CheckArrivalWayPoint();
 
 private:
-	//--------------------------------------------------
-	// 状態管理 ステートマシン
-	//--------------------------------------------------
+	//==================================================
+	// 
+	// 状態管理
+	// 
+	//==================================================
 
-	// 基底抽象ステート
+	//--------------------------------------------------
+	// Name: class StateBase
+	// Desc: 基底抽象ステート
+	//--------------------------------------------------
 	class StateBase
 	{
 	public:
@@ -55,7 +63,10 @@ private:
 		virtual void Update(AutomaticTank& owner) = 0;
 	};
 
-	// 待機状態
+	//--------------------------------------------------
+	// Name: class StateWait
+	// Desc: 待機状態
+	//--------------------------------------------------
 	class StateWait : public StateBase
 	{
 	public:
@@ -63,7 +74,10 @@ private:
 		void Update(AutomaticTank& owner)  override;
 	};
 
-	// ミッション(移動を繰り返す)状態
+	//--------------------------------------------------
+	// Name: class StateMission
+	// Desc: ミッション(移動を繰り返す)状態
+	//--------------------------------------------------
 	class StateMission : public StateBase
 	{
 	public:
@@ -71,7 +85,24 @@ private:
 		void Update(AutomaticTank& owner)  override;
 	};
 
-	// 死亡状態
+	//--------------------------------------------------
+	// Name: class StateCombat
+	// Desc: 戦闘状態
+	//--------------------------------------------------
+	class StateCombat : public StateBase
+	{
+	public:
+		StateCombat();
+		void Initialize(AutomaticTank& owner) override;
+		void Update(AutomaticTank& owner)  override;
+	private:
+		const bool CheckObstacle(AutomaticTank& owner);
+	};
+
+	//--------------------------------------------------
+	// Name: class StateDead
+	// Desc: 死亡状態
+	//--------------------------------------------------
 	class StateDead : public StateBase
 	{
 	public:

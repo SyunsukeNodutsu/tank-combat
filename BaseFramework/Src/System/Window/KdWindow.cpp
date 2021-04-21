@@ -16,6 +16,7 @@ LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT message, WPARAM wParam, L
 //-----------------------------------------------------------------------------
 KdWindow::KdWindow()
 	: m_hWnd(nullptr)
+	, m_windowInfo()
 	, m_mouseWheelVal(0)
 {
 }
@@ -165,6 +166,9 @@ LRESULT KdWindow::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 {
 	// ImGuiにイベント通知
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam)) { return true; }
+
+	// ウィンドウ情報所得
+	GetWindowInfo(hWnd, &m_windowInfo);
 
 	//--------------------------------------------------
 	//メッセージによって処理を選択

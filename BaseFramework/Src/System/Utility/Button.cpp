@@ -4,6 +4,7 @@
 // Edit: 2021/02/23 野筒隼輔
 //-----------------------------------------------------------------------------
 #include "Button.h"
+#include "Application/main.h"
 
 //-----------------------------------------------------------------------------
 // Name: SpriteButton()
@@ -141,6 +142,8 @@ void SpriteButton::SetEasing(const EASING_TYPE type, const float time_length, co
 //-----------------------------------------------------------------------------
 const ButtonState SpriteButton::CheckState(const Math::Vector2 center_pos, const Math::Vector2 mouse_pos)
 {
+	if (!(APP.m_window.GetWinInfo().dwWindowStatus & WS_ACTIVECAPTION)) { return ButtonState::eNone; }
+
 	// マウスカーソルがボタンの上に存在
 	if (mouse_pos.x <= center_pos.x + (m_size.x * 0.5f) && mouse_pos.x >= center_pos.x - (m_size.x * 0.5f) &&
 		mouse_pos.y <= center_pos.y + (m_size.y * 0.5f) && mouse_pos.y >= center_pos.y - (m_size.y * 0.5f)) {

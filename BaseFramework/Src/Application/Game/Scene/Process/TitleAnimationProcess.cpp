@@ -6,6 +6,7 @@
 #include "TitleAnimationProcess.h"
 #include "Application/Game/Other/FixedCamera.h"
 #include "Application/Game/Scene/Scene.h"
+#include "Application/main.h"
 
 //-----------------------------------------------------------------------------
 // Name: TitleAnimationProcess()
@@ -107,6 +108,8 @@ void TitleAnimationProcess::LoadTexture()
 //-----------------------------------------------------------------------------
 void TitleAnimationProcess::CheckSkipProcess()
 {
+	if (!(APP.m_window.GetWinInfo().dwWindowStatus & WS_ACTIVECAPTION)) { return; }
+
 	static bool isPush = true;
 	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000) {
 		if (!isPush) {
