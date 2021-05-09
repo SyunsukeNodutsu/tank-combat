@@ -41,13 +41,8 @@ void AutomaticTank::Deserialize(const json11::Json& json_object)
 		}
 	}
 
-	// 状態.ミッション状態から
-	m_spState = std::make_shared<StateMission>();
-	if (m_spState) {
-		m_spState->Initialize(*this);
-		// 前進命令
-		AdvanceOrder(m_wayPoint[m_wayPointCount]);
-	}
+	// 前進命令
+	AdvanceOrder(m_wayPoint[m_wayPointCount]);
 }
 
 //-----------------------------------------------------------------------------
@@ -103,12 +98,7 @@ void AutomaticTank::AdvanceOrder(const KdVector3 position)
 	// 目標座標を設定
 	m_nextWayPoint = position;
 
-	// 遷移 -> 任務状態
-	m_spState = std::make_shared<StateMission>();
-	if (m_spState) {
-		m_spState->Initialize(*this);
-		m_onceRotFlg = false;
-	}
+	ChangeMission();
 }
 
 //-----------------------------------------------------------------------------
@@ -132,11 +122,7 @@ void AutomaticTank::CheckNextWayPoint()
 	// 経由地点が残っていない(最後まで到着)
 	else {
 		// 待機状態に遷移
-		m_spState = std::make_shared<StateWait>();
-		if (m_spState) {
-			m_spState->Initialize(*this);
-			m_onceRotFlg = false;
-		}
+		ChangeWait();
 	}
 }
 
@@ -231,11 +217,11 @@ void AutomaticTank::SearchEnemy()
 		// TAG確認
 		static bool CheckTargetTag(const UINT myTag, const UINT targetTag) {
 			// 自身が味方戦車か確認
-			return (myTag == OBJECT_TAG::TAG_Allies)
+			return (myTag & OBJECT_TAG::TAG_Allies)
 				// 味方の場合...目標はEnemy
 				? (targetTag & OBJECT_TAG::TAG_Enemy)
 				// 敵の場合  ...目標はPlayerかAllies
-				: ((targetTag & OBJECT_TAG::TAG_Player) || (targetTag & OBJECT_TAG::TAG_Allies));
+				: targetTag & (OBJECT_TAG::TAG_Player | OBJECT_TAG::TAG_Allies);
 		}
 	};
 
@@ -252,13 +238,56 @@ void AutomaticTank::SearchEnemy()
 		if (distance > 100.0f) { continue; }
 
 		// 遷移->戦闘状態
-		m_spState = std::make_shared<StateCombat>();
-		if (m_spState) {
-			m_spState->Initialize(*this);
-			m_enemyTarget = tank;
-			m_onceRotFlg = false;
-		}
+		ChangeCombat(tank);
 	}
+}
+
+//-----------------------------------------------------------------------------
+// Name: ChangeMission()
+// Desc: 状態遷移.任務状態
+//-----------------------------------------------------------------------------
+bool AutomaticTank::ChangeMission()
+{
+	m_spState = std::make_shared<StateMission>();
+	if (m_spState) {
+		m_spState->Initialize(*this);
+		m_onceRotFlg = false;
+		return true;
+	}
+	return false;
+}
+
+//-----------------------------------------------------------------------------
+// Name: ChangeWait()
+// Desc: 待機状態に遷移
+//-----------------------------------------------------------------------------
+bool AutomaticTank::ChangeWait()
+{
+	m_spState = std::make_shared<StateWait>();
+	if (m_spState) {
+		m_spState->Initialize(*this);
+		m_onceRotFlg = false;
+		return true;
+	}
+	return false;
+}
+
+//-----------------------------------------------------------------------------
+// Name: ChangeCombat()
+// Desc: 状態遷移.戦闘状態
+//-----------------------------------------------------------------------------
+bool AutomaticTank::ChangeCombat(std::shared_ptr<Tank> enemy)
+{
+	if (enemy == nullptr) { return false; }
+
+	m_spState = std::make_shared<StateCombat>();
+	if (m_spState) {
+		m_spState->Initialize(*this);
+		m_enemyTarget = enemy;
+		m_onceRotFlg = false;
+		return true;
+	}
+	return false;
 }
 
 
@@ -286,6 +315,10 @@ void AutomaticTank::StateWait::Update(AutomaticTank& owner)
 {
 	// 索敵
 	owner.SearchEnemy();
+	// 移動更新
+	owner.UpdateMove(0.0f);
+	// 衝突判定更新
+	owner.UpdateCollision();
 }
 
 
@@ -341,7 +374,7 @@ void AutomaticTank::StateMission::Update(AutomaticTank& owner)
 
 //=============================================================================
 // 
-// AutomaticTank
+// StateCombat
 // 
 //=============================================================================
 
@@ -367,7 +400,11 @@ void AutomaticTank::StateCombat::Initialize(AutomaticTank& owner)
 //-----------------------------------------------------------------------------
 void AutomaticTank::StateCombat::Update(AutomaticTank& owner)
 {
-	if (owner.m_enemyTarget == nullptr) { return; }
+	// 敵が存在しなければ遷移.任務状態
+	if (owner.m_enemyTarget == nullptr) {
+		owner.ChangeMission();
+		return;
+	}
 
 	// 敵への方向
 	KdVector3 targetAxis = owner.m_enemyTarget->GetMatrix().GetTranslation() - owner.m_position;
@@ -380,6 +417,11 @@ void AutomaticTank::StateCombat::Update(AutomaticTank& owner)
 		owner.UpdateShot();
 	}
 
+	// 移動更新
+	owner.UpdateMove(0.0f);
+	// 衝突判定更新
+	owner.UpdateCollision();
+
 	// 砲塔にカメラのZ軸を送信
 	if (owner.m_spTankParts) {
 		owner.m_spTankParts->SetTargetAxis(targetAxis);
@@ -387,11 +429,7 @@ void AutomaticTank::StateCombat::Update(AutomaticTank& owner)
 
 	// 敵を撃破したら任務に戻る
 	if (!owner.m_enemyTarget->IsAlive()) {
-		owner.m_spState = std::make_shared<StateMission>();
-		if (owner.m_spState) {
-			owner.m_spState->Initialize(owner);
-			owner.m_onceRotFlg = false;
-		}
+		owner.ChangeMission();
 	}
 }
 

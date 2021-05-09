@@ -26,7 +26,7 @@ public:
 	// 更新
 	virtual void Update() override;
 	// 状態ごとの更新 ※純粋仮想関数.派生先に任せる
-	virtual void UpdateByState() {};
+	virtual void UpdateByState() = 0;
 	// 描画
 	virtual void Draw() override;
 	// シャドウマップ描画

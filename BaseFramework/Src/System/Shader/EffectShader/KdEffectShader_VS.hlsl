@@ -21,6 +21,9 @@ VSOutput main(float4 pos : POSITION, float2 uv : TEXCOORD0, float4 color : COLOR
 //        pos.x += wave;
 //    }
 
+    // こうしたほうが完全なような
+    pos = float4(pos.xyz, 1);
+
     // 座標変換
     Out.Pos = mul(pos, g_mW);       // ローカル座標系 -> ワールド座標系へ変換
     Out.Pos = mul(Out.Pos, g_mV);   // ワールド座標系 -> ビュー座標系へ変換

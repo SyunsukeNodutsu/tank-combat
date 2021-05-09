@@ -35,7 +35,6 @@ void EditorCamera::Deserialize(const json11::Json& json_object)
 	m_spCameraComponent = std::make_shared<CameraComponent>(*this);
 	if (m_spCameraComponent) {
 		m_spCameraComponent->SetFovAngle(60.0f * KdToRadians);
-		CAMERA_MAGER.SetTargetCamera(m_spCameraComponent);
 	}
 }
 

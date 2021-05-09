@@ -4,7 +4,7 @@
   "GameObjectList": [
     {
       "ClassName": "PlayerTank",
-      "Name": "M4",
+      "Name": "M4_Player",
       "Tag": 1,
       "Prefab": "Data/Text/Object/Weapon/M4.json",
       "Position": [ -186, 2, -280 ]
@@ -16,6 +16,10 @@
       "Position": [ -186, 1, -240 ],
       "Rotation": [ 0, 90, 0 ],
       "GoTo": [ -186, 4, -240 ]
+    },
+    {
+      "ClassName": "EditorCamera",
+      "Name": "EditorCamera"
     },
     {
       "ClassName": "SkySphere",

@@ -33,6 +33,13 @@ public:
 	// 索敵
 	void SearchEnemy();
 
+	// 任務状態に遷移
+	bool ChangeMission();
+	// 待機状態に遷移
+	bool ChangeWait();
+	// 戦闘状態に遷移
+	bool ChangeCombat(std::shared_ptr<Tank> enemy);
+
 private:
 	std::shared_ptr<StateBase>				m_spState;			// 状態
 	std::unordered_map<uint8_t, KdVector3>	m_wayPoint;			// 経由地点

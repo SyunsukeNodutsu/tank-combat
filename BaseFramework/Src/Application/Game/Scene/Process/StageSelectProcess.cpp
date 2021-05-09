@@ -198,13 +198,13 @@ void StageSelectProcess::UpdateButton(const POINT mouse_pos)
 		SCENE.RequestChangeScene("Data/Text/Process/Stage_01Process.json");
 	}
 	if (m_buttonArray[1].IsPush()) {
-		SCENE.RequestChangeScene("Data/Text/Process/Stage_02Process.json");
+	//	SCENE.RequestChangeScene("Data/Text/Process/Stage_02Process.json");
 	}
 	if (m_buttonArray[2].IsPush()) {
 		SCENE.RequestChangeScene("Data/Text/Process/Stage_03Process.json");
 	}
 	if (m_buttonArray[3].IsPush()) {
-		SCENE.RequestChangeScene("Data/Text/Process/Stage_04Process.json");
+	//	SCENE.RequestChangeScene("Data/Text/Process/Stage_04Process.json");
 	}
 
 	//--------------------------------------------------

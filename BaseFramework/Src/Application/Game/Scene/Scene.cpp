@@ -49,7 +49,7 @@ void Scene::Deserialize()
 	IRQ.Deserialize();
 
 	// 音量設定
-	AUDIO.SetUserSettingVolume(0.08f);
+	AUDIO.SetUserSettingVolume(0.2f);
 
 	//--------------------------------------------------
 	// 開始シーン
