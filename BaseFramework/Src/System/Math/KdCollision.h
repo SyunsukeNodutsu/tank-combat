@@ -11,7 +11,7 @@
 //--------------------------------------------------
 struct KdRayResult
 {
-	float		m_distance	= 100;		// 衝突したところまでの距離
+	float		m_distance	= FLT_MAX;	// 衝突したところまでの距離
 	bool		m_hit		= false;	// 衝突したかどうか
 	KdVector3	m_hitPos	= {};		// 衝突した座標
 	UINT		m_indexNum	= 0;		// 面の番号
@@ -22,7 +22,7 @@ struct KdRayResult
 // Desc: 球の衝突判定
 // Ret : 衝突...true 回避...false
 //--------------------------------------------------
-bool KdSphereToMesh(
+bool KdSphereToSphere(
 	const float aHitRange,
 	const KdVector3& aPos,
 	const KdMatrix& aMatrix

@@ -35,19 +35,24 @@
       "Name": "M4_Frendliy_01",
       "Prefab": "Data/Text/Object/Weapon/T43.json",
       "Tag": 2,
-      "Position": [ -186, 2, -240 ]
+      "Position": [ -186, 2, -240 ],
+      "WayPointList": [
+        { "WayPoint": [ -185, 0,  -88 ] },
+        { "WayPoint": [   54, 0,  -88 ] },
+        { "WayPoint": [   54, 0,   54 ] }
+      ]
     },
     {
       "ClassName": "AutomaticTank",
       "Name": "M4_Enemy_01",
       "Prefab": "Data/Text/Object/Weapon/M4.json",
       "Tag": 4,
-      "Position": [ -66, 2, -90 ],
+      "Position": [ 146, 2, 54 ],
       "Rotation": [ 0, -90, 0 ],
       "WayPointList": [
-        { "WayPoint": [ 54, 0, 54 ] },
-        { "WayPoint": [ 54, 0, -88 ] },
-        { "WayPoint": [ -185, 0, -88 ] },
+        { "WayPoint": [   54, 0,   54 ] },
+        { "WayPoint": [   54, 0,  -88 ] },
+        { "WayPoint": [ -185, 0,  -88 ] },
         { "WayPoint": [ -185, 0, -270 ] }
       ]
     },
@@ -57,15 +62,24 @@
       "Prefab": "Data/Text/Object/Weapon/M4.json",
       "Tag": 4,
       "Position": [ 54, 2, -27 ],
-      "Rotation": [ 0, 180, 0 ]
+      "Rotation": [ 0, 180, 0 ],
+      "WayPointList": [
+        { "WayPoint": [   54, 0,  -88 ] },
+        { "WayPoint": [ -185, 0,  -88 ] },
+        { "WayPoint": [ -185, 0, -270 ] }
+      ]
     },
     {
       "ClassName": "AutomaticTank",
       "Name": "M4_Enemy_03",
       "Prefab": "Data/Text/Object/Weapon/M4.json",
       "Tag": 4,
-      "Position": [ 65, 2, 54 ],
-      "Rotation": [ 0, -90, 0 ]
+      "Position": [ 54, 2, -88 ],
+      "Rotation": [ 0, -90, 0 ],
+      "WayPointList": [
+        { "WayPoint": [ -185, 0,  -88 ] },
+        { "WayPoint": [ -185, 0, -270 ] }
+      ]
     },
     {
       "ClassName": "GameObject",

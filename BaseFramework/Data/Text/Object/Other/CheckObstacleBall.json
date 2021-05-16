@@ -1,0 +1,6 @@
+{
+  "ClassName": "CheckObstacleBall",
+  "Name": "CheckObstacleBall",
+  "ModelFilepath": "Data/Model/Weapon/CannonBall/CannonBall.gltf",
+  "ColModelFilepath": "Data/Model/Weapon/CannonBall/CannonBall.gltf"
+}

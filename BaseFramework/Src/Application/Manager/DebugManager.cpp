@@ -25,6 +25,7 @@ DebugManager::DebugManager()
 	, m_isNoDamage(true)
 	, m_isCollModelShow(false)
 	, m_isOBBShow(false)
+	, m_isPointListShow(false)
 {
 }
 
@@ -183,6 +184,7 @@ void DebugManager::ImGuiUpdate()
 		ImGui::Checkbox("NoDamage",			&m_isNoDamage);			// 無敵状態
 		ImGui::Checkbox("CollModelShow",	&m_isCollModelShow);	// コリジョンモデル表示
 		ImGui::Checkbox("OBBShow",			&m_isOBBShow);			// バウンディングボックス表示
+		ImGui::Checkbox("PointListShow",	&m_isPointListShow);	// 経由地点表示
 
 		ImGui::TreePop();
 	}

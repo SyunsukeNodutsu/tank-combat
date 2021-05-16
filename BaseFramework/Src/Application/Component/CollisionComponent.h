@@ -52,7 +52,7 @@ struct RayInfo
 {
 	KdVector3	m_pos = KdVector3(0.0f, 0.0f, 0.0f);
 	KdVector3	m_dir = KdVector3(0.0f, 0.0f, 0.0f);
-	float		m_maxRange = 0.0f;
+	float		m_maxRange = FLT_MAX;
 };
 
 //--------------------------------------------------------

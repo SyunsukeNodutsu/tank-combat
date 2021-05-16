@@ -11,10 +11,10 @@
 using namespace DirectX;
 
 //-----------------------------------------------------------------------------
-// Name: KdSphereToMesh()
-// Desc: 球とメッシュ
+// Name: KdSphereToSphere()
+// Desc: 球と球
 //-----------------------------------------------------------------------------
-bool KdSphereToMesh(const float hitRange, const KdVector3& pos, const KdMatrix& matrix)
+bool KdSphereToSphere(const float hitRange, const KdVector3& pos, const KdMatrix& matrix)
 {
 	// 自分の座標ベクトル
 	const KdVector3 myPos = matrix.GetTranslation();
@@ -30,23 +30,24 @@ bool KdSphereToMesh(const float hitRange, const KdVector3& pos, const KdMatrix& 
 // Name: KdRayToMesh()
 // Desc: レイとメッシュ
 //-----------------------------------------------------------------------------
-bool KdRayToMesh(const XMVECTOR& rRayPos, const XMVECTOR& rRayDir, float maxDistance, const KdMesh& rMesh, const KdMatrix& rMatrix, KdRayResult& rResult)
+bool KdRayToMesh(const XMVECTOR& rayPos, const XMVECTOR& rayDir, float maxDistance, const KdMesh& mesh, const KdMatrix& matrix, KdRayResult& result)
 {
-	// モデルの逆行列でレイを変換
-	XMMATRIX invMat = XMMatrixInverse(0, rMatrix);
+	// モデルの逆行列でRayを変換
+	XMMATRIX invM = XMMatrixInverse(0, matrix);
+	// Rayの位置を逆変換
+	XMVECTOR rPos = XMVector3TransformCoord(rayPos, invM);
+	// Rayの方向を逆変換
+	XMVECTOR rDir = XMVector3TransformNormal(rayDir, invM);
 
-	// レイの判定開始位置を逆反転
-	XMVECTOR rayPos = XMVector3TransformCoord(rRayPos, invMat);
+	// 変換後のRayの長さを記憶しておき、正規化する
+	// ※行列に拡縮が入っているとRayの長さが変わる
+	// ※Rayの長さは1でなければならない
+	float len = XMVector3Length(rDir).m128_f32[0];
+	if (len <= 0)
+		return false;
 
-	// 発射方向は正規化されてないと正しく判定できないので正規化
-	XMVECTOR rayDir = XMVector3TransformNormal(rRayDir, invMat);
-
-	// 逆行列に拡縮が入っていると
-	// レイが当たった距離にも拡縮が反映されてしまうので
-	// 判定用の最大距離にも拡縮を反映させておく
-	float dirLength = XMVector3Length(rayDir).m128_f32[0];
-	float rayChackRange = maxDistance * dirLength;
-	rayDir = XMVector3Normalize(rayDir);
+	// 正規化
+	rDir = XMVector3Normalize(rDir);
 
 	//--------------------------------------------------
 	// ブロードフェイズ
@@ -54,11 +55,14 @@ bool KdRayToMesh(const XMVECTOR& rRayPos, const XMVECTOR& rRayDir, float maxDist
 	//--------------------------------------------------
 	{
 		// AABB vs レイ
-		float AABBdist = FLT_MAX;
-		if (!rMesh.GetBoundingBox().Intersects(rayPos, rayDir, AABBdist)) { return false; }
+		float dist = 0;
+		if (!mesh.GetBoundingBox().Intersects(rPos, rDir, dist))
+			return false;
 
-		// 最大距離なら範囲外なので中止
-		if (AABBdist > rayChackRange) { return false; }
+		// 最大距離以降なら範囲外なので中止
+		dist /= len;// 正確な長さに変換
+		if (dist > maxDistance)
+			return false;
 	}
 
 	//--------------------------------------------------
@@ -66,62 +70,60 @@ bool KdRayToMesh(const XMVECTOR& rRayPos, const XMVECTOR& rRayDir, float maxDist
 	// レイvsすべての面
 	//--------------------------------------------------
 
-	// 当たったかどうか
-	bool result = false;
-	// 当たった面との距離
+	// 最も近くにヒットした距離
 	float closestDist = FLT_MAX;
+	bool ret = false;
 
-	// 面情報の所得
-	const KdMeshFace* pFace = &rMesh.GetFaces()[0];
-	const UINT faceNum = rMesh.GetFaces().size();
+	// 面情報の所得 ※DEBUGビルドでも速度を維持するために、別変数に拾っておく
+	const KdMeshFace* pFaces = &mesh.GetFaces()[0];
+	UINT faceNum = mesh.GetFaces().size();
 
-	// すべての面(三角形)と当たり判定
-	for (UINT faceIdx = 0; faceIdx < faceNum; ++faceIdx) {
+	// すべての面(三角形)
+	for (UINT fi = 0; fi < faceNum; fi++)
+	{
 		// 三角形を構成する3つの頂点のIndex
-		const UINT* idx = pFace[faceIdx].Idx;
+		const UINT* idx = pFaces[fi].Idx;
 
-		// レイと三角形の当たり判定
-		float triDist = FLT_MAX;
-		const bool isHit = TriangleTests::Intersects(
-			rayPos,								// 発射場所
-			rayDir,								// 発射方向(正規化済み)
-			rMesh.GetVertexPositions()[idx[0]],	// 判定する3角形の頂点情報
-			rMesh.GetVertexPositions()[idx[1]],
-			rMesh.GetVertexPositions()[idx[2]],
-			triDist								// 当たった場合の距離
+		// レイと三角形の判定
+		float d = FLT_MAX;
+		bool isHit = TriangleTests::Intersects(
+			rPos,								// 発射場所
+			rDir,								// 発射方向(正規化済み)
+			mesh.GetVertexPositions()[idx[0]],	// 判定する3角形の頂点情報
+			mesh.GetVertexPositions()[idx[1]],
+			mesh.GetVertexPositions()[idx[2]],
+			d									// 当たった場合の距離
 		);
 
-		// ヒットしていなかったらスキップ
-		if (!isHit) { continue; }
+		// 正確な長さに変換
+		d /= len;
 
-		// 最大距離内か
-		if (triDist <= rayChackRange) {
-			// 当たったとする
-			result = true;
-			// 当たり判定でとれる距離は拡縮に影響がないので、実際の長さを計算する
-			triDist /= dirLength;
-
+		// 衝突 & 最大距離以内
+		if (isHit && d <= maxDistance)
+		{
 			// 近いほうを 距離を更新
-			if (triDist < closestDist) {
-				closestDist = triDist;
-				rResult.m_indexNum = faceIdx;
+			if (d < closestDist)
+			{
+				closestDist = d;// 距離を更新
+				result.m_indexNum = fi;// 面の番号
 			}
+
+			ret = true;
 		}
 	}
 
 	// 結果情報設定
-	rResult.m_distance = closestDist;
-	rResult.m_hit = result;
-	if (rResult.m_hit) {
-		rResult.m_hitPos = rRayPos + rayDir * closestDist;
-	}
+	result.m_distance = closestDist;
+	result.m_hit = ret;
+	if (result.m_hit)
+		result.m_hitPos = rayPos + rayDir * result.m_distance;
 
-	return result;
+	return ret;
 }
 
 //-----------------------------------------------------------------------------
 // Name: KdSphereToMesh()
-// Desc: 
+// Desc: 球とメッシュ
 //-----------------------------------------------------------------------------
 bool KdSphereToMesh(const Math::Vector3& aSpherePos, float aRadius, const KdMesh& aMesh, const XMMATRIX& aMatrix, Math::Vector3& aPushedPos)
 {
@@ -136,7 +138,8 @@ bool KdSphereToMesh(const Math::Vector3& aSpherePos, float aRadius, const KdMesh
 
 		// 判定した結果衝突していなければ以降の処理はしない
 		BoundingSphere bs(aSpherePos, aRadius);
-		if (!aabb.Intersects(bs)) { return false; }
+		if (!aabb.Intersects(bs))
+			return false;
 	}
 
 	//--------------------------------------------------
@@ -172,7 +175,8 @@ bool KdSphereToMesh(const Math::Vector3& aSpherePos, float aRadius, const KdMesh
 	XMVECTOR vToCenter = {};
 
 	// 全ての面と判定 ※判定はメッシュのローカル空間で行われる
-	for (UINT i = 0; i < faceNum; i++) {
+	for (UINT i = 0; i < faceNum; i++)
+	{
 		// 点と三角形の最近接点を算出
 		KdPointToTriangle(QPos, vertices[pFaces[i].Idx[0]], vertices[pFaces[i].Idx[1]], vertices[pFaces[i].Idx[2]], nearPt);
 		// 最近接点から球の中心へのベクトルを算出
@@ -181,7 +185,8 @@ bool KdSphereToMesh(const Math::Vector3& aSpherePos, float aRadius, const KdMesh
 		vToCenter *= scale;
 
 		// vToCenterが半径以内の場合は衝突している
-		if (XMVector3LengthSq(vToCenter).m128_f32[0] <= radiusSq) {
+		if (XMVector3LengthSq(vToCenter).m128_f32[0] <= radiusSq)
+		{
 			// 最近接点を出力データに記憶する ※逆行列に変換したものを元に返す
 			nearPt = XMVector3TransformCoord(nearPt, aMatrix);
 
@@ -199,14 +204,15 @@ bool KdSphereToMesh(const Math::Vector3& aSpherePos, float aRadius, const KdMesh
 	}
 
 	// 衝突していた場合押し戻された球の座標を格納
-	if (isHit) { aPushedPos = XMVector3TransformCoord(QPos, aMatrix); }
+	if (isHit)
+		aPushedPos = XMVector3TransformCoord(QPos, aMatrix);
 
 	return isHit;
 }
 
 //-----------------------------------------------------------------------------
 // Name: KdPointToTriangle()
-// Desc: 
+// Desc: 点と三角形の判定
 //-----------------------------------------------------------------------------
 void KdPointToTriangle(const XMVECTOR& p, const XMVECTOR& a, const XMVECTOR& b, const XMVECTOR& c, XMVECTOR& outPt)
 {

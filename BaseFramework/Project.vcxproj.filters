@@ -730,6 +730,9 @@
     <None Include="Data\Text\Object\Meta\AddEnemy_Tutorial_01.json">
       <Filter>Data\Text\Object\Meta</Filter>
     </None>
+    <None Include="Data\Text\Object\Other\CheckObstacleBall.json">
+      <Filter>Data\Text\Object\Other</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\System\Shader\EffectShader\KdEffectShader_PS.hlsl">

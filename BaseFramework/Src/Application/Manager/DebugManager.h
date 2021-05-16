@@ -46,6 +46,8 @@ public:
 	const bool IsCollModelShow() const { return m_isCollModelShow; }
 	// OBBの表示
 	const bool IsOBBShow() const { return m_isOBBShow; }
+	// WayPointListの表示
+	const bool IsPointListShow() const { return m_isPointListShow; }
 
 private:
 	std::shared_ptr<ImGuiLogWindow>	m_spLogWindow;		// デバッグ用のLogを管理
@@ -53,6 +55,7 @@ private:
 	bool							m_isNoDamage;		// 無敵状態
 	bool							m_isCollModelShow;	// コリジョンモデルの表示
 	bool							m_isOBBShow;		// OBBの表示
+	bool							m_isPointListShow;	// WayPointListの表示
 
 private:
 	DebugManager();

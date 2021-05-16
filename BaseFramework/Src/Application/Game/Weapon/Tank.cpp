@@ -91,7 +91,9 @@ void Tank::Update()
 void Tank::Draw()
 {
 	GameObject::Draw();
-	if (m_spTankParts) { m_spTankParts->Draw(); }
+
+	if (m_spTankParts)
+		m_spTankParts->Draw();
 }
 
 //-----------------------------------------------------------------------------
@@ -101,7 +103,9 @@ void Tank::Draw()
 void Tank::DrawShadowMap()
 {
 	GameObject::DrawShadowMap();
-	if (m_spTankParts) { m_spTankParts->DrawShadowMap(); }
+
+	if (m_spTankParts)
+		m_spTankParts->DrawShadowMap();
 }
 
 //-----------------------------------------------------------------------------
@@ -349,7 +353,7 @@ void Tank::UpdateRunBGM()
 
 	// 座標.音量の設定
 	m_spRunBGM->SetPosition(m_position);
-	m_spRunBGM->SetVolume(volume);
+	m_spRunBGM->SetVolume(volume * 3);
 }
 
 //-----------------------------------------------------------------------------
@@ -403,20 +407,27 @@ KdRayResult Tank::CheckGround(float& dst_distance, KdVector3 ray_pos)
 	rayInfo.m_pos.y += allowToStepHeight;				// 段差を考慮
 	rayInfo.m_pos.y += m_prevPosition.y - m_position.y;	// 移動値を考慮
 	rayInfo.m_dir = KdVector3(0.0f, -1.0f, 0.0f);
-	rayInfo.m_maxRange = FLT_MAX;
+	rayInfo.m_maxRange = 100;
 
 	// 全Objectと判定
 	KdRayResult finalRayResult = {};
-	for (auto& object : OBJ_MAGER.GetObjectList()) {
-		// 地面が対象
-		if (object.get() == this) { continue; }
-		if (object->GetTag() & OBJECT_TAG::TAG_StageObject) {
-			if (object->GetCollisionComponent() == nullptr) { continue; }
-			// 判定
+	for (auto& object : OBJ_MAGER.GetObjectList())
+	{
+		if (object.get() == this)
+			continue;
+
+		if (object->GetTag() & OBJECT_TAG::TAG_StageObject)
+		{
+			if (object->GetCollisionComponent() == nullptr)
+				continue;
+
 			KdRayResult rayResult = {};
-			if (!object->GetCollisionComponent()->HitCheckByRay(rayInfo, rayResult)) { continue; }
+			if (!object->GetCollisionComponent()->HitCheckByRay(rayInfo, rayResult))
+				continue;
+
 			// 最短距離を確認
-			if (rayResult.m_distance < finalRayResult.m_distance) { finalRayResult = rayResult; }
+			if (rayResult.m_distance < finalRayResult.m_distance)
+				finalRayResult = rayResult;
 		}
 	}
 

@@ -128,9 +128,10 @@ void Scene::ImGuiUpdate()
 		ImGui::Text("FPS       : %d", APP.m_fps);
 		ImGui::Text("ThreadNum : %d", std::thread::hardware_concurrency());
 		ImGui::Text("ThreadID  : %d", std::this_thread::get_id());
-
-		if (APP.m_window.GetWinInfo().dwWindowStatus & WS_ACTIVECAPTION) { ImGui::Text("State     : ACTIVE"); }
-		else { ImGui::Text("State     : NOT ACTIVE"); }
+		// 一番手前のウィンドウ.not Alt + Tab
+		const bool isActive = APP.m_window.GetWinInfo().dwWindowStatus & WS_ACTIVECAPTION;
+		const char* windowStatus = (isActive)? "State     : ACTIVE" : "State     : NOT ACTIVE";
+		ImGui::Text(windowStatus);
 
 		// デバッグ.発表用
 		DEBUG_MAGER.ImGuiUpdate();

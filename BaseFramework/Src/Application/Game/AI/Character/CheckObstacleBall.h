@@ -6,10 +6,8 @@
 #pragma once
 #include "Application/Game/GameObject.h"
 
-//--------------------------------------------------
-// 前方宣言
-//--------------------------------------------------
 class Tank;
+enum class HitResult;
 
 //-----------------------------------------------------------------------------
 // Name: class CheckObstacleBall
@@ -25,6 +23,8 @@ public:
 	void Update() override;
 	// 軸設定
 	void SetAxis(const KdVector3 axis) { m_axis = axis; }
+	// 発見
+	HitResult Result();
 
 private:
 	Tank&		m_owner;		// オーナー
@@ -36,4 +36,11 @@ private:
 private:
 	void UpdateCollision();
 	void CheckTank(std::shared_ptr<Tank> object);
+};
+
+// 衝突時の結果
+enum class HitResult
+{
+	eNone,
+	eTank,
 };

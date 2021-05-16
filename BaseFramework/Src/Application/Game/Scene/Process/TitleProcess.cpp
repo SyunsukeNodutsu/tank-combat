@@ -187,7 +187,6 @@ void TitleProcess::UpdateButton(const POINT mouse_pos)
 	}
 	// 終了
 	if (m_buttonArray[TitleButton::eExit].IsPush()) {
-		auto result = MessageBoxA(APP.m_window.GetWndHandle(), "ゲームを終了しますか？", "確認", MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2);
-		if (result == IDYES) { APP.End(); }
+		APP.End();
 	}
 }

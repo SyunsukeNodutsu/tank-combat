@@ -1,10 +1,12 @@
 ﻿//-----------------------------------------------------------------------------
 // File: AutomaticTank.h
 //
-// Edit: 2021/04/20 野筒隼輔
+// Edit: 2021/05/14 野筒隼輔
 //-----------------------------------------------------------------------------
 #pragma once
 #include "Application/Game/Weapon/Tank.h"
+
+class CheckObstacleBall;
 
 //-----------------------------------------------------------------------------
 // Name: class AutomaticTank
@@ -45,12 +47,15 @@ private:
 	std::unordered_map<uint8_t, KdVector3>	m_wayPoint;			// 経由地点
 	uint8_t									m_wayPointCount;	// 経由地点を何回経由したか
 	KdVector3								m_nextWayPoint;		// 前進の目標座標
+	float									m_searchRange;		// 索敵範囲 ※視覚の距離
 	bool									m_onceRotFlg;		// 経由地点に車体が回転を終えたか
 	std::shared_ptr<Tank>					m_enemyTarget;		// 攻撃目標 ※修正.各Stateに持たせて.アクセサで設定したほうがいい
+	std::shared_ptr<CheckObstacleBall>		m_checkObstacleBall;// 見えない球を射出して視覚をシュミレート
 
 private:
-	void SettingWayPoint(const json11::Json& json_object);
+	const bool SettingWayPoint(const json11::Json& json_object);
 	const bool CheckArrivalWayPoint();
+	const bool CheckObstacle(std::shared_ptr<Tank> enemy);
 
 private:
 	//==================================================
